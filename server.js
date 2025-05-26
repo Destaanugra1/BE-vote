@@ -11,8 +11,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Haiiii love youu❤️");
+app.get('/', (req, res) => {
+  res.send('Haiiii love youu❤️');
 });
 
 // Routes
@@ -20,5 +20,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/candidates', candidateRoutes);
 app.use('/api/votes', voteRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Jangan pakai app.listen di Vercel!
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Export app untuk Vercel
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Server running on port ${port}`));
+
+module.exports = app;

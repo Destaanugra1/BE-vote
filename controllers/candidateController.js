@@ -30,6 +30,46 @@ exports.createCandidate = async (req, res) => {
   }
 };
 
+exports.editCandidate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, vision, mission } = req.body;
+    let photo_url = req.body.photo_url; // default: pakai yang lama
+
+    // Jika ada file foto baru, upload ke Cloudinary
+    if (req.file) {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'voting-app' },
+        async (error, result) => {
+          if (error) return res.status(500).json({ error: 'Upload failed' });
+
+          photo_url = result.secure_url;
+
+          const { error: dbError } = await supabase
+            .from('candidates')
+            .update({ name, vision, mission, photo_url })
+            .eq('id', id);
+
+          if (dbError) return res.status(500).json({ error: dbError.message });
+          res.json({ message: 'Candidate updated' });
+        }
+      );
+      stream.end(req.file.buffer);
+    } else {
+      // Jika tidak ada file baru, update data tanpa ganti foto
+      const { error: dbError } = await supabase
+        .from('candidates')
+        .update({ name, vision, mission, photo_url })
+        .eq('id', id);
+
+      if (dbError) return res.status(500).json({ error: dbError.message });
+      res.json({ message: 'Candidate updated' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 exports.getCandidates = async (req, res) => {
   try {
     // Ambil semua kandidat

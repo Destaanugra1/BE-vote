@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const candidateRoutes = require('./routes/candidateRoutes');
 const voteRoutes = require('./routes/voteRoutes');
+const formaturRoutes = require('./routes/formaturRoutes');
 
 dotenv.config();
 const app = express();
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/candidates', candidateRoutes);
 app.use('/api/votes', voteRoutes);
+app.use('/api/formatur', formaturRoutes)
 
 // Jangan pakai app.listen di Vercel!
 // const PORT = process.env.PORT || 5000;
